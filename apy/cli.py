@@ -131,6 +131,37 @@ def add_from_file(file, tags):
         _added_notes_postprocessing(a, notes)
 
 
+@main.command('scrape-from-file')
+@click.option('-t', '--tags', help='Specify default tags for new cards.')
+@click.option('-z', '--cloze', 'cloze_model_name',
+              default='Cloze',
+              help='Specify model to use for cloze cards')
+@click.option('-1', '--oneway', 'oneway_model_name',
+              default='Basic',
+              help='Specify model to use for one-way cards')
+@click.option('-2', '--twoway', 'twoway_model_name',
+              default='Basic (and reversed card)',
+              help='Specify model to use for two-way cards')
+@click.option('-d', '--deck', default='Default',
+              help='Specify default deck for new cards.')
+@click.option('-v', '--verbose', is_flag=True,
+              help='Show every card as they are added')
+@click.argument('files', nargs=-1, type=click.Path(exists=True, dir_okay=False),
+              help='Files to read to create cards')
+def add_single(tags, cloze_model_name, oneway_model_name, twoway_model_name,
+                deck, verbose, files):
+    """Add notes from markdown files, following rules based on markdown
+    formatting.
+
+    Underlined (__text__) text in sentences make clozes, bold text (**text**)
+    make one-way questions, italic text (*text*) make two-way questions, and
+    two-columns tables will generate two-way questions.
+    """
+    # Todo : Work on better semantics for one and two-way questions, find some
+    # ideas
+    pass
+
+
 def _added_notes_postprocessing(a, notes):
     """Common postprocessing after 'apy add[-from-file]'."""
     n_notes = len(notes)
