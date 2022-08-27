@@ -442,3 +442,12 @@ class Anki:
             click.echo(list(fields)[0])
 
         return Note(self, note)
+
+    # Should files be processed one by one or in batch ?
+    def scrape_notes_from_file(self, tags='', cloze_model_name,
+            one_way_name, two_way_name, deck, file):
+        clozes, oneways, twoways = pass
+
+        for cloze in clozes:
+            pass
+        # etc...

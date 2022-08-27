@@ -132,7 +132,7 @@ def add_from_file(file, tags):
 
 
 @main.command('scrape-from-file')
-@click.option('-t', '--tags', help='Specify default tags for new cards.')
+@click.option('-t', '--tags', default='', help='Specify default tags for new cards.')
 @click.option('-z', '--cloze', 'cloze_model_name',
               default='Cloze',
               help='Specify model to use for cloze cards')
@@ -142,13 +142,13 @@ def add_from_file(file, tags):
 @click.option('-2', '--twoway', 'twoway_model_name',
               default='Basic (and reversed card)',
               help='Specify model to use for two-way cards')
-@click.option('-d', '--deck', default='Default',
+@click.option('-d', '--deck', default=None,
               help='Specify default deck for new cards.')
-@click.option('-v', '--verbose', is_flag=True,
+@click.option('-v', '--verbose', 'verbose', is_flag=True,
               help='Show every card as they are added')
 @click.argument('files', nargs=-1, type=click.Path(exists=True, dir_okay=False),
               help='Files to read to create cards')
-def add_single(tags, cloze_model_name, oneway_model_name, twoway_model_name,
+def scrape_from_file(tags, cloze_model_name, oneway_model_name, twoway_model_name,
                 deck, verbose, files):
     """Add notes from markdown files, following rules based on markdown
     formatting.
@@ -159,7 +159,13 @@ def add_single(tags, cloze_model_name, oneway_model_name, twoway_model_name,
     """
     # Todo : Work on better semantics for one and two-way questions, find some
     # ideas
-    pass
+    with Anki(**cfg) as a:
+        # Should files be processed one by one or in a batch ?
+        for file in files:
+            if verbose click.echo(f"Processing {file}...")
+            notes = a.scrape_notes_from_files(tags, cloze_model_name,
+                    one_way_name, two_way_name, deck, file)
+            _added_notes_postprocessing(a, notes)
 
 
 def _added_notes_postprocessing(a, notes):
